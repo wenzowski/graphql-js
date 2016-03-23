@@ -468,7 +468,8 @@ function doesFragmentConditionMatch(
     return true;
   }
   if (isAbstractType(conditionalType)) {
-    return ((conditionalType: any): GraphQLAbstractType).isPossibleType(type);
+    const abstractType = ((conditionalType: any): GraphQLAbstractType);
+    return exeContext.schema.isPossibleType(abstractType, type);
   }
   return false;
 }
@@ -799,7 +800,8 @@ function completeAbstractValue(
   result: mixed
 ): mixed {
   const runtimeType = returnType.getObjectType(result, info);
-  if (runtimeType && !returnType.isPossibleType(runtimeType)) {
+  if (runtimeType &&
+      !exeContext.schema.isPossibleType(returnType, runtimeType)) {
     throw new GraphQLError(
       `Runtime Object type "${runtimeType}" is not a possible type ` +
       `for "${returnType}".`,
