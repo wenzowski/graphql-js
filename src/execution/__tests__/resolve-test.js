@@ -111,4 +111,24 @@ describe('Execute: resolve function', () => {
     });
   });
 
+  it('passes optional arguments to the provided resolve function', async () => {
+    const schema = testSchema({
+      type: GraphQLString,
+      args: {
+        aStr: { type: GraphQLString },
+        aInt: { type: GraphQLInt },
+      },
+      resolve(source, args, context, info) {
+        return JSON.stringify([ source, args, context, info.rootValue ]);
+      }
+    });
+
+    expect(
+      await graphql(schema, '{ test }')
+    ).to.deep.equal({
+      data: {
+        test: '[null,{},{},{}]'
+      }
+    });
+  });
 });
